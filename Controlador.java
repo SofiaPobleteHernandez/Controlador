@@ -10,13 +10,16 @@ public class Controlador {
     private int numero_de_pistas;
     ArrayList<Pistas> pistas;
     ArrayList<Enemigo> enemigos;
+    Pistas[]rep_pistas;
     String[][][] matriz;
     int[][]suelo;
-    //Pistas pista[];
 
     public Controlador(){
         valkyrie=new Valkyrie();
-
+        rep_pistas=new Pistas[numero_de_pistas];
+        pistas=new ArrayList<Pistas>();
+        enemigos=new ArrayList<Enemigo>();
+        matriz=new String[longitud_espacio][ancho_espacio][altura_espacio];
     }
 
     public Controlador(String opcion, int longitud_espacio, int altura_espacio, int ancho_espacio, Valkyrie valkyrie, int numero_de_pistas){
@@ -26,75 +29,120 @@ public class Controlador {
         this.ancho_espacio=ancho_espacio;
         this.valkyrie=valkyrie;
         this.numero_de_pistas=numero_de_pistas;
-        pistas=new ArrayList<Pistas>();
-        enemigos=new ArrayList<Enemigo>();
-        matriz=new String[longitud_espacio][ancho_espacio][altura_espacio];
-        suelo=new int[longitud_espacio][ancho_espacio];
     }
 
     Scanner leer_opcion = new Scanner(System.in);
     int veces=0;
 
     public int Establecer_Longitud(){
-        longitud_espacio=(int)(Math.random() * 100000)+300;
+        longitud_espacio=(int)(Math.random() * 10000)+300;
         return this.longitud_espacio;
     }
 
     public int Establecer_Altura(){
-        altura_espacio=(int)(Math.random() * 100000)+300;
+        altura_espacio=(int)(Math.random() * 10000)+300;
         return this.altura_espacio;
     }
 
-    public int Establecer_Ancho(){
-        ancho_espacio=(int)(Math.random() * 100000)+300;
+    public int Establecer_Ancho() {
+        ancho_espacio = (int)(Math.random() * 10000) + 300;
         return this.ancho_espacio;
     }
 
+    public int Cantidad_de_Pistas(){
+        if(ancho_espacio>longitud_espacio){
+            numero_de_pistas = (int) (Math.random() * (ancho_espacio/longitud_espacio))+1;
+        }
+
+        if(ancho_espacio<longitud_espacio){
+            numero_de_pistas = (int) (Math.random() * (longitud_espacio/ancho_espacio))+1;
+        }
+
+        if(ancho_espacio == longitud_espacio){
+            numero_de_pistas = (int) (Math.random() * ancho_espacio) +1;
+        }
+        return this.numero_de_pistas;
+    }
+
+
     public ArrayList Establecer_Pistas(){
 
-        int eleccion=0;
-        int largo=0;
-        int ancho=0;
-        int posicion_x=0;
-        int posicion_y=0;
-        int ancho_ocupado=0;
-        int largo_ocupado=0;
-        int numero_de_pista=1;
+        int azar = 0;
 
-        posicion_x= (int)(Math.random() * (longitud_espacio-1))+0;
-        posicion_y= (int)(Math.random() * (ancho_espacio-1))+0;
+        suelo=new int[ancho_espacio][longitud_espacio];
 
-        largo=(int)(Math.random() * (longitud_espacio-posicion_x))+1;
-        ancho=(int)(Math.random() * (ancho_espacio-posicion_y))+1;
+        for(int i = 0; i<ancho_espacio; i++){
+            for(int j = 0; j<longitud_espacio; j++){
 
-        ancho_ocupado=ancho+posicion_y;
-        largo_ocupado=largo+posicion_x;
-
-        eleccion=largo+posicion_x;
-
-        Pistas pista = new Pistas(posicion_x,largo,ancho,posicion_y);
-        pistas.add(pista);
-
-        while((largo_ocupado+1)<longitud_espacio) {
-            while ((ancho_ocupado) + 1 < ancho_espacio) {
-                posicion_y = (int) (Math.random() * ancho_espacio) + (ancho_ocupado + 1);
-                ancho = (int) (Math.random() * (ancho_espacio - posicion_y)) + 1;
-
-                posicion_x = (int) (Math.random() * eleccion) + 0;
-                largo = (int) (Math.random() * eleccion) + posicion_x;
-
-                Pistas base = new Pistas(posicion_x, largo, ancho, posicion_y);
-                pistas.add(base);
-
-                ancho_ocupado=posicion_y+ancho;
+                suelo[i][j]=0;
             }
-            eleccion=(int)(Math.random() * longitud_espacio)+ (eleccion+1);
-            ancho_ocupado=0;
-
         }
+
+        System.out.println("Se llenó suelo");
+
+        for(int i = 0; i<ancho_espacio; i++){
+            for(int j = 0; j<longitud_espacio; j++){
+
+                if(i==0){
+
+                    azar = (int) (Math.random() * 10)+1;
+
+                    if(azar>5){
+                        suelo[i][j]=1;
+                    }
+
+                }
+
+                if(i>0){
+
+                    if(j>0) {
+                        if ((suelo[i - 1][j] == 1) && (suelo[i][j - 1]) == 1) {
+                            suelo[i][j] = 1;
+                        }
+
+                        if ((suelo[i - 1][j] == 0) && (suelo[i][j - 1] == 1)) {
+                            azar = (int) (Math.random() * 10) + 1;
+                            if (azar > 5) {
+                                suelo[i][j] = 1;
+                            }
+                        }
+
+                        if ((suelo[i - 1][j] == 1) && (suelo[i][j - 1] == 0)) {
+                            azar = (int) (Math.random() * 10) + 1;
+                            if (azar > 5) {
+                                suelo[i][j] = 1;
+                            }
+                        }
+
+                        if ((suelo[i - 1][j] == 0) && (suelo[i][j - 1] == 0)) {
+                            azar = (int) (Math.random() * 10) + 1;
+                            if (azar > 5) {
+                                suelo[i][j] = 1;
+                            }
+                        }
+                    }
+
+                    if(j==0){
+
+                        azar = (int) (Math.random() * 10)+1;
+                        if(azar > 5){
+                            suelo[i][j] = 1;
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        System.out.println("Se creó pistas");
+
+
 
         return this.pistas;
     }
+
+
 
     public int Imprimir_Pistas(){
         System.out.println("");
@@ -102,7 +150,7 @@ public class Controlador {
         for (int i=0; i<numero_de_pistas; i++){
             System.out.println("");
             System.out.println("-Pista " + (i+1) + " : ");
-            System.out.println("-Comienza en las coordenadas : (" + pistas.get(i).getPosicion_x_pista() + "," + pistas.get(i).getPosicion_y_pista());
+            System.out.println("-Comienza en las coordenadas : (" + pistas.get(i).getPosicion_x_pista() + "," + pistas.get(i).getPosicion_y_pista() + ")");
             System.out.println("-Tiene una longitud de       : " + pistas.get(i).getLongitud_pista());
             System.out.println("-Tiene un ancho de           : " + pistas.get(i).getAncho_pista());
             System.out.println("-----------------------------------------------------------------");
@@ -127,7 +175,7 @@ public class Controlador {
                 }
             }
         }
-        return enemigos;
+        return this.enemigos;
     }
 
     public int Mostrar_Enemigos(){
